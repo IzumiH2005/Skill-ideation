@@ -1,0 +1,586 @@
+<title>Arrondi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout : grille 12 col, conteneur 1240px (marges 100px à 1440), F-pattern dans le hero, sections de 96px, multiples de 8.
+   Couleur 60-30-10 : 60 % bleu encre (confiance, finance) en tints/shades, 30 % neutres teintés de bleu, 10 % abricot (CTA amical). */
+:root{
+  --ink-900:#0E1F3D; --ink-700:#1B3A6B; --ink-600:#24508F; --ink-100:#E3EBF7; --ink-50:#F2F6FC;
+  --bg:#FAFBFD; --surface:#FFFFFF; --surface-2:#EEF2F8;
+  --fg:#101A2C; --fg-2:#4A5A73; --line:#D9E1EC;
+  --accent:#F2994A; --accent-soft:#FDEBDA; --on-accent:#3A1C02;
+  --success:#1E7A46; --success-bg:#E3F4EA; --error:#B42318; --error-bg:#FDECEA;
+  --btn:#1B3A6B; --btn-hover:#0E1F3D; --on-btn:#FFFFFF;
+  --dark-band:#0E1F3D; --on-dark:#F2F6FC; --on-dark-2:#B8C6DD;
+  --shadow-soft:0 10px 15px rgba(16,26,44,.04),0 2px 4px rgba(16,26,44,.06);
+  --shadow-lift:0 15px 20px -6px rgba(27,58,107,.20),0 2px 4px rgba(16,26,44,.08);
+  --nav-fill:rgba(250,251,253,.80);
+  --f-display:"Bricolage Grotesque","Inter",system-ui,sans-serif;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --radius:12px; --radius-lg:20px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink-900:#E3EBF7; --ink-700:#8FB3E8; --ink-600:#A9C5EE; --ink-100:#1D2E4D; --ink-50:#14223B;
+  --bg:#0B1424; --surface:#121E33; --surface-2:#18263F;
+  --fg:#EEF2F8; --fg-2:#A7B4C9; --line:#26375A;
+  --accent:#F4A462; --accent-soft:#3A2614; --on-accent:#2A1402;
+  --success:#6FD39B; --success-bg:#12301F; --error:#FF8A80; --error-bg:#3A1513;
+  --btn:#8FB3E8; --btn-hover:#B4CDF2; --on-btn:#0B1424;
+  --dark-band:#070E1A; --on-dark:#EEF2F8; --on-dark-2:#A7B4C9;
+  --shadow-soft:0 10px 15px rgba(0,0,0,.30),0 2px 4px rgba(0,0,0,.40);
+  --shadow-lift:0 15px 20px -6px rgba(0,0,0,.5),0 0 0 1px rgba(143,179,232,.18);
+  --nav-fill:rgba(11,20,36,.78); color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --ink-900:#E3EBF7; --ink-700:#8FB3E8; --ink-600:#A9C5EE; --ink-100:#1D2E4D; --ink-50:#14223B;
+  --bg:#0B1424; --surface:#121E33; --surface-2:#18263F;
+  --fg:#EEF2F8; --fg-2:#A7B4C9; --line:#26375A;
+  --accent:#F4A462; --accent-soft:#3A2614; --on-accent:#2A1402;
+  --success:#6FD39B; --success-bg:#12301F; --error:#FF8A80; --error-bg:#3A1513;
+  --btn:#8FB3E8; --btn-hover:#B4CDF2; --on-btn:#0B1424;
+  --dark-band:#070E1A; --on-dark:#EEF2F8; --on-dark-2:#A7B4C9;
+  --shadow-soft:0 10px 15px rgba(0,0,0,.30),0 2px 4px rgba(0,0,0,.40);
+  --shadow-lift:0 15px 20px -6px rgba(0,0,0,.5),0 0 0 1px rgba(143,179,232,.18);
+  --nav-fill:rgba(11,20,36,.78); color-scheme:dark;}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{background:var(--bg);color:var(--fg);font:400 16px/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;color:var(--fg);letter-spacing:-.02em}
+p{margin:0}
+a{color:inherit}
+.wrap{max-width:1240px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (min-width:640px){.wrap{padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}}
+@media (min-width:1304px){.wrap{max-width:1304px}}
+@media (min-width:1920px){.wrap{max-width:1504px}}
+section{padding-block:64px}
+@media (min-width:900px){section{padding-block:96px}}
+.eyebrow{font:600 13px/1 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-600)}
+.section-head{display:grid;gap:16px;max-width:640px;margin-bottom:48px}
+.section-head h2{font-size:clamp(32px,4vw,48px);line-height:1.1}
+.section-head p{color:var(--fg-2);font-size:18px}
+.num{font-variant-numeric:tabular-nums}
+
+/* Boutons : 48px, padding H = 2× V, label 16px, états distincts mais sobres */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 24px;border-radius:var(--radius);font:600 16px/1 var(--f-body);text-decoration:none;border:1px solid transparent;cursor:pointer;transition:background .15s,box-shadow .15s,transform .1s}
+.btn:focus-visible,.link:focus-visible,summary:focus-visible,.seg button:focus-visible,input:focus-visible,.nav a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn-primary{background:var(--btn);color:var(--on-btn);box-shadow:var(--shadow-lift)}
+.btn-primary:hover{background:var(--btn-hover)}
+.btn-primary:active{transform:translateY(1px);box-shadow:none}
+.btn-primary[disabled]{opacity:.55;cursor:not-allowed;box-shadow:none}
+.btn-secondary{background:var(--surface-2);color:var(--fg)}
+.btn-secondary:hover{background:var(--ink-100)}
+.btn-outline{background:transparent;color:var(--fg);border-color:var(--line)}
+.btn-outline:hover{border-color:var(--fg-2)}
+.btn-sm{min-height:44px;padding:10px 20px;font-size:15px}
+.link{font-weight:600;color:var(--ink-600);text-decoration:underline;text-underline-offset:3px;display:inline-flex;align-items:center;min-height:44px}
+.play{width:20px;height:20px;border-radius:50%;background:var(--fg);color:var(--bg);display:grid;place-items:center;font-size:9px}
+
+/* Nav sticky : fill 80 % + blur 24 + stroke bas 1px */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--nav-fill);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:72px}
+.logo{display:flex;align-items:center;gap:8px;font:800 22px/1 var(--f-display);text-decoration:none;color:var(--fg);min-height:44px}
+.logo-mark{width:32px;height:32px;border-radius:10px;background:var(--btn);color:var(--on-btn);display:grid;place-items:center;font-size:18px}
+.nav-links{display:none;gap:8px;list-style:none;margin:0;padding:0}
+.nav-links a{display:flex;align-items:center;min-height:44px;padding:0 12px;text-decoration:none;color:var(--fg-2);font-weight:500;border-radius:8px;position:relative}
+.nav-links a:hover{color:var(--fg);background:var(--surface-2)}
+.nav-links a.active{color:var(--fg)}
+.nav-links a.active::after{content:"";position:absolute;left:12px;right:12px;bottom:6px;height:2px;border-radius:2px;background:var(--accent)}
+@media (min-width:900px){.nav-links{display:flex}}
+
+/* Hero */
+.hero{position:relative;overflow:hidden;padding-block:48px 0}
+@media (min-width:900px){.hero{padding-block:80px 0}}
+.hero::before{content:"";position:absolute;width:720px;height:720px;right:-160px;top:-120px;border-radius:50%;background:radial-gradient(circle,var(--ink-100) 0%,var(--ink-100) 25%,transparent 70%);opacity:.9;pointer-events:none}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.06;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.hero-grid{position:relative;z-index:1;display:grid;gap:48px;align-items:center}
+@media (min-width:900px){.hero-grid{grid-template-columns:7fr 5fr;gap:40px}}
+.hero-copy{display:grid;gap:24px;min-width:0}
+.chip{justify-self:start;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:var(--accent-soft);color:var(--on-accent);font:600 14px/1.2 var(--f-body)}
+:root[data-theme="dark"] .chip{color:var(--accent)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip{color:var(--accent)}}
+.hero h1{font-size:clamp(40px,6vw,64px);line-height:1.05;font-weight:800}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 62%,var(--accent-soft) 62%)}
+.lead{font-size:clamp(17px,1.6vw,20px);color:var(--fg-2);max-width:560px}
+.checks{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.checks li{display:flex;gap:12px;align-items:flex-start}
+.tick{flex:none;width:24px;height:24px;border-radius:50%;background:var(--success-bg);color:var(--success);display:grid;place-items:center;font-size:13px;font-weight:700;margin-top:1px}
+.cta-row{display:flex;flex-wrap:wrap;gap:16px;padding-top:8px}
+.proof{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.avatars{display:flex}
+.avatars span{width:36px;height:36px;border-radius:50%;border:2px solid var(--bg);margin-left:-10px;display:grid;place-items:center;font:600 13px/1 var(--f-body);color:#fff}
+.avatars span:first-child{margin-left:0}
+.proof-text{font-size:14px;color:var(--fg-2);line-height:1.4}
+.proof-text strong{color:var(--fg)}
+.stars{color:var(--accent);letter-spacing:2px}
+.guarantee{font-size:14px;color:var(--fg-2)}
+
+/* Mockup téléphone */
+.phone-stage{position:relative;display:flex;justify-content:center;min-width:0}
+.blown{position:absolute;font:800 clamp(280px,32vw,460px)/.8 var(--f-display);color:var(--ink-100);right:-20px;top:-40px;user-select:none;pointer-events:none;letter-spacing:-.06em}
+.phone{position:relative;width:min(300px,100%);border-radius:40px;background:var(--surface);border:8px solid var(--fg);box-shadow:0 30px 60px -20px rgba(16,26,44,.35);padding:24px 16px 32px;display:grid;gap:16px}
+.phone-top{display:flex;justify-content:space-between;font:600 12px/1 var(--f-body);color:var(--fg-2)}
+.balance{background:var(--btn);color:var(--on-btn);border-radius:var(--radius-lg);padding:20px 16px;display:grid;gap:4px}
+.balance small{opacity:.8;font-size:12px}
+.balance b{font:800 34px/1.1 var(--f-display)}
+.goal{height:8px;border-radius:8px;background:rgba(255,255,255,.25);overflow:hidden;margin-top:8px}
+.goal i{display:block;height:100%;width:64%;background:var(--accent);border-radius:8px}
+.balance .goal-label{font-size:12px;opacity:.85}
+.tx{display:grid;gap:8px}
+.tx-title{font:600 13px/1 var(--f-body);color:var(--fg-2)}
+.tx-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-radius:12px;background:var(--surface-2);font-size:13px}
+.tx-row span:first-child{display:grid;line-height:1.3}
+.tx-row small{color:var(--fg-2);font-size:11px}
+.plus{font-weight:700;color:var(--success);background:var(--success-bg);padding:4px 8px;border-radius:8px;font-size:12px;white-space:nowrap}
+
+/* Teasing : bande qui dépasse sous la ligne de flottaison */
+.peek{position:relative;z-index:1;margin-top:56px;border-radius:24px 24px 0 0;background:var(--dark-band);color:var(--on-dark);padding:24px 0}
+.peek .wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+@media (min-width:900px){.peek .wrap{grid-template-columns:repeat(4,1fr)}}
+.stat b{display:block;font:800 clamp(26px,3vw,36px)/1.1 var(--f-display)}
+.stat span{font-size:14px;color:var(--on-dark-2)}
+
+/* Étapes */
+.steps{display:grid;gap:24px}
+@media (min-width:900px){.steps{grid-template-columns:repeat(3,1fr)}}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:24px 20px;display:grid;gap:12px;align-content:start}
+.step-n{width:40px;height:40px;border-radius:12px;background:var(--ink-50);color:var(--ink-700);display:grid;place-items:center;font:800 18px/1 var(--f-display)}
+.step h3{font-size:22px;line-height:1.25}
+.step p{color:var(--fg-2)}
+.example{margin-top:4px;font-size:14px;padding:12px;border-radius:12px;background:var(--surface-2)}
+.example b{color:var(--success)}
+
+/* Simulateur */
+.sim{margin-top:48px;display:grid;gap:32px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:32px 24px;box-shadow:var(--shadow-soft)}
+@media (min-width:900px){.sim{grid-template-columns:1fr 1fr;padding:40px}}
+.sim h3{font-size:28px}
+.sim-form{display:grid;gap:24px;align-content:start}
+.field{display:grid;gap:8px}
+.field label{font-weight:600;font-size:15px}
+.field .hint{font-size:14px;color:var(--fg-2)}
+.range-row{display:flex;align-items:center;gap:16px}
+input[type=range]{flex:1;accent-color:var(--btn);min-height:44px}
+.range-val{min-width:64px;text-align:right;font-weight:700}
+.sim-result{background:var(--ink-50);border-radius:var(--radius);padding:24px;display:grid;gap:8px;align-content:center}
+.sim-result .big{font:800 clamp(40px,5vw,56px)/1 var(--f-display);color:var(--ink-700)}
+.sim-result p{color:var(--fg-2)}
+
+/* Cartes fonctionnalités */
+.features{display:grid;gap:24px}
+@media (min-width:700px){.features{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1000px){.features{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--surface);border-radius:var(--radius-lg);padding:24px 20px;display:grid;gap:12px;grid-template-rows:auto auto 1fr auto;box-shadow:var(--shadow-soft)}
+.card-ico{width:48px;height:48px;border-radius:14px;background:var(--accent-soft);display:grid;place-items:center;font-size:22px;color:var(--on-accent)}
+.card h3{font-size:20px;line-height:1.3}
+.card p{color:var(--fg-2);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Pricing */
+.pricing-bg{background:var(--ink-50)}
+.seg{display:inline-flex;padding:4px;border-radius:12px;background:var(--surface);border:1px solid var(--line);margin-bottom:40px}
+.seg button{min-height:44px;padding:0 20px;border:0;border-radius:9px;background:transparent;color:var(--fg-2);font:600 15px/1 var(--f-body);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--btn);color:var(--on-btn)}
+.save{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:6px;background:var(--accent);color:var(--on-accent);font-size:12px}
+.plans{display:grid;gap:24px;align-items:center}
+@media (min-width:960px){.plans{grid-template-columns:1fr 1.08fr 1fr}}
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:32px 24px;display:grid;gap:20px;position:relative}
+.plan h3{font-size:22px}
+.plan .for{color:var(--fg-2);font-size:15px;margin-top:4px}
+.price{display:flex;align-items:baseline;gap:6px}
+.price b{font:800 44px/1 var(--f-display)}
+.price span{color:var(--fg-2);font-size:15px}
+.plan ul{list-style:none;padding:0;margin:0;display:grid;gap:12px;font-size:15px}
+.plan li{display:flex;gap:10px;align-items:flex-start}
+.plan li.off{color:var(--fg-2);opacity:.65}
+.plan li.off .tick{background:var(--surface-2);color:var(--fg-2)}
+.plan .btn{width:100%}
+.plan.featured{background:var(--dark-band);color:var(--on-dark);border-color:transparent;padding:40px 28px;box-shadow:var(--shadow-lift)}
+.plan.featured h3,.plan.featured .price b{color:var(--on-dark)}
+.plan.featured .for,.plan.featured .price span{color:var(--on-dark-2)}
+.plan.featured .tick{background:rgba(111,211,155,.18);color:#6FD39B}
+.plan.featured .btn-primary{background:var(--accent);color:var(--on-accent);box-shadow:0 15px 20px -6px rgba(242,153,74,.35)}
+.plan.featured .btn-primary:hover{filter:brightness(1.06)}
+.badge{position:absolute;top:-14px;left:28px;padding:6px 12px;border-radius:999px;background:var(--accent);color:var(--on-accent);font:700 12px/1 var(--f-body);letter-spacing:.06em;text-transform:uppercase}
+.gift{display:inline-block;padding:2px 8px;border-radius:6px;background:var(--success-bg);color:var(--success);font-size:12px;font-weight:700;margin-left:4px}
+.plan.featured .gift{background:rgba(111,211,155,.18);color:#6FD39B}
+.tip{position:relative;border-bottom:1px dashed currentColor;cursor:help}
+.tip-box{position:absolute;left:0;bottom:calc(100% + 10px);width:240px;padding:10px 12px;border-radius:10px;background:var(--fg);color:var(--bg);font-size:13px;line-height:1.45;opacity:0;visibility:hidden;transition:opacity .15s;z-index:5;pointer-events:none}
+.tip-box::after{content:"";position:absolute;top:100%;left:16px;border:6px solid transparent;border-top-color:var(--fg)}
+.tip:hover .tip-box,.tip:focus .tip-box{opacity:1;visibility:visible}
+.trust{margin-top:40px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:center;color:var(--fg-2);font-size:14px}
+.trust span{display:inline-flex;align-items:center;gap:8px}
+.biz{margin-top:32px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;padding:24px;border-radius:var(--radius-lg);background:var(--surface);border:1px solid var(--line)}
+.biz p{color:var(--fg-2)}
+.biz strong{color:var(--fg);display:block;font-size:18px;margin-bottom:4px}
+
+/* Avis */
+.reviews{display:grid;gap:24px}
+@media (min-width:960px){.reviews{grid-template-columns:1fr 1fr 1fr}}
+.rating{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:24px;display:grid;gap:12px;align-content:start}
+.rating .score{font:800 48px/1 var(--f-display)}
+.bar-row{display:grid;grid-template-columns:44px 1fr 40px;gap:12px;align-items:center;font-size:14px;color:var(--fg-2)}
+.bar{height:8px;border-radius:8px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:8px}
+.quote{background:var(--surface);border-radius:var(--radius-lg);padding:24px;display:grid;gap:16px;align-content:space-between;box-shadow:var(--shadow-soft)}
+.quote blockquote{margin:0;font-size:17px;line-height:1.55}
+.who{display:flex;gap:12px;align-items:center;font-size:14px}
+.who span{color:var(--fg-2);display:block}
+.av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700}
+
+/* FAQ */
+.faq{display:grid;gap:12px;max-width:800px}
+details{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:0 20px}
+summary{list-style:none;cursor:pointer;min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-weight:600;font-size:17px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";flex:none;width:32px;height:32px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;font-size:20px;font-weight:500;transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{padding-bottom:20px;color:var(--fg-2);max-width:65ch}
+
+/* CTA final + formulaire */
+.final{background:var(--dark-band);color:var(--on-dark);border-radius:28px;padding:48px 24px;display:grid;gap:32px;position:relative;overflow:hidden}
+@media (min-width:900px){.final{grid-template-columns:1.1fr 1fr;padding:64px;align-items:center}}
+.final::before{content:"";position:absolute;width:520px;height:520px;left:-200px;bottom:-260px;border-radius:50%;background:radial-gradient(circle,rgba(242,153,74,.35) 0%,rgba(242,153,74,.15) 30%,transparent 70%);pointer-events:none}
+.final h2{color:var(--on-dark);font-size:clamp(32px,4vw,48px);line-height:1.1;position:relative}
+.final p{color:var(--on-dark-2);position:relative;margin-top:16px;font-size:18px}
+.form{position:relative;background:var(--surface);color:var(--fg);border-radius:var(--radius-lg);padding:24px;display:grid;gap:20px}
+.form input[type=email]{width:100%;min-height:48px;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--line);background:var(--bg);color:var(--fg);font:400 16px/1.2 var(--f-body)}
+.form input[aria-invalid="true"]{border-color:var(--error);background:var(--error-bg)}
+.err{display:flex;gap:8px;align-items:center;color:var(--error);font-size:14px;font-weight:500}
+.err i{font-style:normal;width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;font-size:11px;font-weight:700}
+.check{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--fg-2)}
+.check input{width:20px;height:20px;margin-top:2px;accent-color:var(--btn)}
+.legal{font-size:13px;color:var(--fg-2)}
+.success{display:grid;gap:12px;justify-items:start}
+.success .tick{width:40px;height:40px;font-size:18px}
+
+/* Footer */
+footer{padding-block:64px 32px;border-top:1px solid var(--line);margin-top:96px}
+.foot{display:grid;gap:40px}
+@media (min-width:900px){.foot{grid-template-columns:2fr 1fr 1fr 1fr}}
+.foot h4{margin:0 0 12px;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-2)}
+.foot ul{list-style:none;padding:0;margin:0;display:grid}
+.foot a{text-decoration:none;color:var(--fg);display:flex;align-items:center;min-height:40px}
+.foot a:hover{text-decoration:underline}
+.foot p{color:var(--fg-2);max-width:360px;margin-top:16px}
+.copy{margin-top:48px;padding-top:24px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;font-size:14px;color:var(--fg-2)}
+
+/* Barre CTA mobile dans la zone du pouce */
+.thumb-bar{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:var(--nav-fill);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--line);transform:translateY(110%);transition:transform .25s}
+.thumb-bar.show{transform:none}
+.thumb-bar .btn{width:100%}
+@media (min-width:900px){.thumb-bar{display:none}}
+
+/* Mode annotations : montre la règle du livre appliquée */
+.notes-toggle{position:fixed;z-index:45;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(88px + env(safe-area-inset-bottom,0px));min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:600 14px/1 var(--f-body);box-shadow:var(--shadow-soft);cursor:pointer}
+@media (min-width:900px){.notes-toggle{bottom:calc(24px + env(safe-area-inset-bottom,0px))}}
+.notes-toggle[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:transparent}
+[data-rule]{position:relative}
+.show-notes [data-rule]{outline:2px dashed var(--accent);outline-offset:4px}
+.show-notes [data-rule]::before{content:attr(data-rule);position:absolute;z-index:30;top:-14px;left:8px;max-width:min(340px,90%);padding:4px 8px;border-radius:6px;background:var(--accent);color:var(--on-accent);font:600 11px/1.35 var(--f-body);letter-spacing:0;text-transform:none;pointer-events:none}
+</style>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Arrondi, retour en haut" data-rule="Logo en haut à gauche, cliquable : pas de lien « Accueil »"><span class="logo-mark" aria-hidden="true">a</span>arrondi</a>
+    <ul class="nav-links" data-rule="Liens courts + hover + état actif souligné">
+      <li><a href="#fonctionnement" class="active">Fonctionnement</a></li>
+      <li><a href="#tarifs">Tarifs</a></li>
+      <li><a href="#avis">Avis</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="btn btn-outline btn-sm" href="#inscription" data-rule="CTA de nav : outline, distinct du primaire et du secondaire">Obtenir l'app</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div class="hero-copy" data-rule="Hero aligné à gauche (F-pattern) : valeur, bénéfices, action, confiance">
+        <span class="chip">Épargne automatique, sans effort</span>
+        <h1 id="hero-title">Épargnez sur chaque achat. <em>Préparez demain sereinement.</em></h1>
+        <p class="lead">Arrondi arrondit vos paiements à l'euro supérieur et met la différence de côté. Vous ne sentez rien passer, votre épargne grandit toute seule.</p>
+        <ul class="checks">
+          <li><span class="tick" aria-hidden="true">✓</span>Un café à 2,60 € ? 0,40 € part sur votre épargne.</li>
+          <li><span class="tick" aria-hidden="true">✓</span>Des objectifs clairs : vacances, coup dur, projet.</li>
+          <li><span class="tick" aria-hidden="true">✓</span>Votre argent reste disponible, retrait en 1 jour ouvré.</li>
+        </ul>
+        <div class="cta-row" data-rule="1 CTA primaire contrasté + 1 secondaire discret, du + au − important">
+          <a class="btn btn-primary" href="#inscription">Commencer gratuitement</a>
+          <a class="btn btn-secondary" href="#fonctionnement"><span class="play" aria-hidden="true">▶</span>Voir comment ça marche</a>
+        </div>
+        <div class="proof" data-rule="Preuve sociale : avatars + note + nombre d'avis précis">
+          <div class="avatars" aria-hidden="true">
+            <span style="background:#24508F">CL</span><span style="background:#B5562A">MK</span><span style="background:#1E7A46">SB</span><span style="background:#6B4FA0">JD</span>
+          </div>
+          <p class="proof-text"><span class="stars" aria-hidden="true">★★★★★</span><br><strong class="num">4,9/5</strong> sur <span class="num">12 487</span> avis · sans engagement</p>
+        </div>
+      </div>
+      <div class="phone-stage" data-rule="Visuel produit + logo agrandi en fond">
+        <span class="blown" aria-hidden="true">a</span>
+        <div class="phone" role="img" aria-label="Aperçu de l'application : 386,40 € épargnés, objectif vacances à 64 %">
+          <div class="phone-top"><span>9:41</span><span>Bonjour Camille</span></div>
+          <div class="balance">
+            <small>Épargné depuis janvier</small>
+            <b class="num">386,40 €</b>
+            <div class="goal"><i></i></div>
+            <span class="goal-label">Objectif vacances · 64 % de 600 €</span>
+          </div>
+          <div class="tx">
+            <span class="tx-title">Derniers arrondis</span>
+            <div class="tx-row"><span>Boulangerie<small>2,60 €</small></span><span class="plus num">+0,40 €</span></div>
+            <div class="tx-row"><span>Métro<small>2,15 €</small></span><span class="plus num">+0,85 €</span></div>
+            <div class="tx-row"><span>Librairie<small>17,30 €</small></span><span class="plus num">+0,70 €</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="peek" data-rule="Bande qui dépasse sous la ligne de flottaison : donne envie de scroller">
+      <div class="wrap">
+        <div class="stat"><b class="num">27 €</b><span>épargnés par mois en moyenne</span></div>
+        <div class="stat"><b class="num">2 min</b><span>pour ouvrir son compte</span></div>
+        <div class="stat"><b class="num">0 €</b><span>de frais sur l'offre Essentiel</span></div>
+        <div class="stat"><b class="num">1 jour</b><span>pour récupérer son argent</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="fonctionnement" aria-labelledby="how-title">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Fonctionnement</span>
+        <h2 id="how-title">Trois étapes, puis plus rien à faire</h2>
+        <p>Vous payez comme d'habitude. Arrondi s'occupe du reste, en arrière-plan.</p>
+      </div>
+      <div class="steps" data-rule="Cartes de même structure et même hauteur, alignées sur une ligne">
+        <article class="step"><span class="step-n">1</span><h3>Reliez votre carte</h3><p>Connectez votre compte bancaire en lecture seule. Arrondi ne peut rien dépenser à votre place.</p></article>
+        <article class="step"><span class="step-n">2</span><h3>Payez normalement</h3><p>Chaque paiement est arrondi à l'euro supérieur. La différence est notée, pas encore prélevée.</p><p class="example">Courses à 43,20 € → <b>0,80 €</b> mis de côté</p></article>
+        <article class="step"><span class="step-n">3</span><h3>Regardez votre épargne grandir</h3><p>Une fois par semaine, les centimes rejoignent votre épargne et avancent vers vos objectifs.</p></article>
+      </div>
+
+      <div class="sim" data-rule="Formulaire : labels toujours visibles, réponse immédiate">
+        <div class="sim-form">
+          <h3>Combien pourriez-vous épargner ?</h3>
+          <div class="field">
+            <label for="buys">Paiements par carte chaque semaine</label>
+            <div class="range-row"><input id="buys" type="range" min="3" max="40" value="15"><span class="range-val num" id="buys-val">15</span></div>
+          </div>
+          <div class="field">
+            <label for="mult">Multiplicateur d'arrondi</label>
+            <span class="hint">Avec ×2, un arrondi de 0,40 € met 0,80 € de côté.</span>
+            <div class="range-row"><input id="mult" type="range" min="1" max="3" value="1" step="1"><span class="range-val num" id="mult-val">×1</span></div>
+          </div>
+        </div>
+        <div class="sim-result" aria-live="polite">
+          <span class="eyebrow">Estimation sur un an</span>
+          <span class="big num" id="sim-year">390 €</span>
+          <p id="sim-detail">Avec un arrondi moyen de 0,50 € par paiement.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="feat-title" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Ce qui change</span>
+        <h2 id="feat-title">Une épargne qui s'adapte à votre vie</h2>
+      </div>
+      <div class="features" data-rule="Anatomie de carte : icône, titre, texte tronqué, lien en bas">
+        <article class="card"><span class="card-ico" aria-hidden="true">◎</span><h3>Objectifs nommés</h3><p>Créez un objectif « Vacances » ou « Imprévus ». Vous voyez à tout moment combien il manque et à quelle date vous l'atteindrez.</p><a class="link" href="#faq">Voir un exemple →</a></article>
+        <article class="card"><span class="card-ico" aria-hidden="true">⇅</span><h3>Pause en un geste</h3><p>Fin de mois serrée ? Mettez les arrondis en pause pour une semaine ou un mois, sans perdre vos objectifs.</p><a class="link" href="#faq">Comment ça marche →</a></article>
+        <article class="card"><span class="card-ico" aria-hidden="true">€</span><h3>Argent disponible</h3><p>Retirez tout ou partie de votre épargne quand vous voulez. Le virement arrive sur votre compte en 1 jour ouvré.</p><a class="link" href="#faq">Délais de retrait →</a></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="tarifs" class="pricing-bg" aria-labelledby="price-title">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Tarifs</span>
+        <h2 id="price-title">Commencez gratuitement, passez à Plus quand vous voulez</h2>
+        <p>Changez d'offre ou arrêtez à tout moment, depuis l'app.</p>
+      </div>
+      <div class="seg" role="group" aria-label="Période de facturation" data-rule="Remise en % (prix < 100 €)">
+        <button type="button" id="bill-m" aria-pressed="true">Mensuel</button>
+        <button type="button" id="bill-y" aria-pressed="false">Annuel <span class="save">−20 %</span></button>
+      </div>
+      <div class="plans">
+        <article class="plan">
+          <div><h3>Essentiel</h3><p class="for">Pour tester l'épargne automatique</p></div>
+          <div class="price"><b class="num">0 €</b><span>pour toujours</span></div>
+          <ul>
+            <li><span class="tick" aria-hidden="true">✓</span>Arrondis à l'euro supérieur</li>
+            <li><span class="tick" aria-hidden="true">✓</span>1 objectif d'épargne</li>
+            <li class="off"><span class="tick" aria-hidden="true">–</span>Multiplicateur ×2 et ×3 <span class="num">(+0,99 €/mois)</span></li>
+            <li class="off"><span class="tick" aria-hidden="true">–</span>Règles automatiques</li>
+          </ul>
+          <a class="btn btn-outline" href="#inscription">Choisir Essentiel</a>
+        </article>
+        <article class="plan featured" data-rule="Plan visé : plus grand, fond inversé, badge, seul CTA plein, add-on offert">
+          <span class="badge">Le plus choisi</span>
+          <div><h3>Plus</h3><p class="for">Pour atteindre ses objectifs plus vite</p></div>
+          <div class="price"><b class="num" data-m="2,99 €" data-y="2,39 €">2,99 €</b><span data-m="par mois" data-y="par mois, facturé 28,68 €/an">par mois</span></div>
+          <ul>
+            <li><span class="tick" aria-hidden="true">✓</span>Tout Essentiel, objectifs illimités</li>
+            <li><span class="tick" aria-hidden="true">✓</span>Multiplicateur ×2 et ×3 <span class="gift">Offert</span></li>
+            <li><span class="tick" aria-hidden="true">✓</span><span class="tip" tabindex="0">Règles automatiques<span class="tip-box" role="tooltip">Exemple : « Mettre 5 € de côté chaque fois que je dépense moins de 50 € dans la semaine ».</span></span></li>
+            <li><span class="tick" aria-hidden="true">✓</span>Bilan mensuel de vos dépenses</li>
+          </ul>
+          <a class="btn btn-primary" href="#inscription">Essayer Plus 30 jours gratuits</a>
+        </article>
+        <article class="plan">
+          <div><h3>Famille</h3><p class="for">Pour épargner à plusieurs</p></div>
+          <div class="price"><b class="num" data-m="4,99 €" data-y="3,99 €">4,99 €</b><span data-m="par mois" data-y="par mois, facturé 47,88 €/an">par mois</span></div>
+          <ul>
+            <li><span class="tick" aria-hidden="true">✓</span>Tout Plus, jusqu'à 4 membres</li>
+            <li><span class="tick" aria-hidden="true">✓</span><span class="tip" tabindex="0">Objectifs partagés<span class="tip-box" role="tooltip">Chaque membre contribue avec ses propres arrondis. Tout le monde voit la progression.</span></span></li>
+            <li><span class="tick" aria-hidden="true">✓</span>Comptes ados avec plafond</li>
+            <li><span class="tick" aria-hidden="true">✓</span>Support prioritaire</li>
+          </ul>
+          <a class="btn btn-outline" href="#inscription">Choisir Famille</a>
+        </article>
+      </div>
+      <div class="trust" data-rule="Sans logos clients : badges de sécurité et de paiement">
+        <span>🔒 Connexion bancaire en lecture seule</span><span>🛡️ Données chiffrées AES-256</span><span>💳 CB · Visa · Mastercard · Apple Pay</span>
+      </div>
+      <div class="biz" data-rule="Offre alternative sous les plans pour les cas hors grille">
+        <p><strong>Vous êtes une entreprise ?</strong>Proposez Arrondi à vos salariés comme avantage, avec un abondement de votre part.</p>
+        <a class="btn btn-secondary" href="#inscription">Planifier un appel de 20 min</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="avis" aria-labelledby="rev-title">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Avis</span>
+        <h2 id="rev-title">Ils mettent de côté sans y penser</h2>
+      </div>
+      <div class="reviews">
+        <div class="rating" data-rule="Carte d'avis : note + histogramme">
+          <span class="score num">4,9</span>
+          <span class="stars" aria-label="5 étoiles sur 5">★★★★★</span>
+          <span class="proof-text num">12 487 avis vérifiés</span>
+          <div class="bar-row"><span>5 ★</span><span class="bar"><i style="width:91%"></i></span><span class="num">91 %</span></div>
+          <div class="bar-row"><span>4 ★</span><span class="bar"><i style="width:6%"></i></span><span class="num">6 %</span></div>
+          <div class="bar-row"><span>3 ★</span><span class="bar"><i style="width:2%"></i></span><span class="num">2 %</span></div>
+          <div class="bar-row"><span>1–2 ★</span><span class="bar"><i style="width:1%"></i></span><span class="num">1 %</span></div>
+        </div>
+        <figure class="quote"><blockquote>« J'ai payé mes billets de train pour l'été avec mes arrondis. Je n'avais jamais réussi à mettre de côté avant. »</blockquote><figcaption class="who"><span class="av" style="background:#B5562A" aria-hidden="true">MK</span><span><b>Maëlle K.</b><span>Étudiante, Lyon · 14 mois sur Arrondi</span></span></figcaption></figure>
+        <figure class="quote"><blockquote>« La pause d'un mois m'a convaincu. Je garde le contrôle quand le budget est serré, et l'épargne repart toute seule. »</blockquote><figcaption class="who"><span class="av" style="background:#24508F" aria-hidden="true">SB</span><span><b>Samir B.</b><span>Infirmier, Lille · offre Plus</span></span></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" aria-labelledby="faq-title" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head"><span class="eyebrow">FAQ</span><h2 id="faq-title">Vos questions</h2></div>
+      <div class="faq" data-rule="Accordéon : + pour ouvrir, ✕ pour fermer">
+        <details open><summary>Est-ce qu'Arrondi peut dépenser mon argent ?</summary><p>Non. La connexion à votre banque est en lecture seule. Arrondi lit vos paiements pour calculer les arrondis, puis vous prélève une fois par semaine le total, que vous voyez à l'avance dans l'app.</p></details>
+        <details><summary>Combien de temps pour récupérer mon épargne ?</summary><p>Un jour ouvré. Vous pouvez retirer tout ou partie de la somme, sans frais et sans justification.</p></details>
+        <details><summary>Puis-je passer de Plus à Essentiel ?</summary><p>Oui, à tout moment depuis Réglages → Offre. Vos objectifs restent en place ; seuls les multiplicateurs et les règles automatiques se mettent en pause.</p></details>
+        <details><summary>Que se passe-t-il si mon compte est à découvert ?</summary><p>Arrondi suspend automatiquement le prélèvement de la semaine et vous prévient. Rien n'est perdu : les arrondis sont reportés.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section id="inscription" aria-labelledby="final-title" style="padding-top:0">
+    <div class="wrap">
+      <div class="final">
+        <div>
+          <h2 id="final-title">Votre premier euro épargné, aujourd'hui</h2>
+          <p>Recevez le lien de téléchargement par e-mail. Ouverture du compte en 2 minutes, sans engagement.</p>
+        </div>
+        <form class="form" id="signup" novalidate data-rule="Label visible, champ optionnel marqué, erreur inline + icône, état de succès">
+          <div id="form-fields" style="display:grid;gap:20px">
+            <div class="field">
+              <label for="email">Adresse e-mail</label>
+              <input id="email" name="email" type="email" autocomplete="email" placeholder="prenom@exemple.fr" aria-describedby="email-err">
+              <span class="err" id="email-err" hidden><i aria-hidden="true">!</i><span id="email-err-text"></span></span>
+            </div>
+            <label class="check" for="news"><input id="news" type="checkbox">Recevoir un conseil d'épargne par mois (optionnel)</label>
+            <button class="btn btn-primary" type="submit" id="submit">Recevoir le lien</button>
+            <p class="legal">Nous n'utilisons votre adresse que pour vous envoyer le lien.</p>
+          </div>
+          <div class="success" id="form-ok" hidden>
+            <span class="tick" aria-hidden="true">✓</span>
+            <strong>C'est noté !</strong>
+            <p class="legal" id="ok-text"></p>
+            <button class="btn btn-outline btn-sm" type="button" id="again">Utiliser une autre adresse</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div><a class="logo" href="#top"><span class="logo-mark" aria-hidden="true">a</span>arrondi</a><p>L'épargne automatique qui transforme vos centimes en projets.</p></div>
+      <div><h4>Produit</h4><ul><li><a href="#fonctionnement">Fonctionnement</a></li><li><a href="#tarifs">Tarifs</a></li><li><a href="#avis">Avis</a></li></ul></div>
+      <div><h4>Aide</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="#inscription">Nous contacter</a></li><li><a href="#tarifs">Offre entreprise</a></li></ul></div>
+      <div><h4>Légal</h4><ul><li><a href="#top">Mentions légales</a></li><li><a href="#top">Confidentialité</a></li><li><a href="#top">CGU</a></li></ul></div>
+    </div>
+    <div class="copy"><span>© 2026 Arrondi</span><span>Concept fictif : marque, chiffres et avis sont des exemples créés pour illustrer les principes de « How to Design Better UI Components ».</span></div>
+  </div>
+</footer>
+
+<div class="thumb-bar" id="thumb" aria-hidden="true"><a class="btn btn-primary" href="#inscription" tabindex="-1">Commencer gratuitement</a></div>
+<button class="notes-toggle" id="notes" type="button" aria-pressed="false">Afficher les règles du livre</button>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const fmt=n=>n.toLocaleString('fr-FR',{maximumFractionDigits:0})+' €';
+  function sim(){
+    const b=+$('buys').value, m=+$('mult').value;
+    $('buys-val').textContent=b; $('mult-val').textContent='×'+m;
+    const year=b*52*0.5*m;
+    $('sim-year').textContent=fmt(Math.round(year/10)*10);
+    $('sim-detail').textContent='Soit environ '+fmt(Math.round(year/12))+' par mois, avec un arrondi moyen de 0,50 € par paiement.';
+  }
+  $('buys').addEventListener('input',sim); $('mult').addEventListener('input',sim); sim();
+
+  function bill(y){
+    $('bill-m').setAttribute('aria-pressed',!y); $('bill-y').setAttribute('aria-pressed',y);
+    document.querySelectorAll('[data-m]').forEach(el=>{el.textContent=y?el.dataset.y:el.dataset.m;});
+  }
+  $('bill-m').onclick=()=>bill(false); $('bill-y').onclick=()=>bill(true);
+
+  const form=$('signup'), email=$('email');
+  function showErr(msg){email.setAttribute('aria-invalid','true');$('email-err-text').textContent=msg;$('email-err').hidden=false;}
+  function clearErr(){email.removeAttribute('aria-invalid');$('email-err').hidden=true;}
+  email.addEventListener('input',()=>{if(email.getAttribute('aria-invalid'))clearErr();});
+  form.addEventListener('submit',e=>{
+    e.preventDefault();
+    const v=email.value.trim();
+    if(!v){showErr('Saisissez votre adresse e-mail pour recevoir le lien.');email.focus();return;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)){showErr('Vérifiez le format de l’adresse, par exemple prenom@exemple.fr.');email.focus();return;}
+    const btn=$('submit'); btn.disabled=true; btn.textContent='Envoi…';
+    setTimeout(()=>{
+      $('form-fields').hidden=true; $('form-ok').hidden=false;
+      $('ok-text').textContent='Ceci est une démo : aucun e-mail n’est réellement envoyé. Dans l’app, le lien arriverait sur '+v+'.';
+      btn.disabled=false; btn.textContent='Recevoir le lien';
+    },700);
+  });
+  $('again').onclick=()=>{$('form-ok').hidden=true;$('form-fields').hidden=false;email.value='';email.focus();};
+
+  const thumb=$('thumb'), hero=document.querySelector('.hero-copy .cta-row');
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(([en])=>{const s=!en.isIntersecting&&en.boundingClientRect.top<0;thumb.classList.toggle('show',s);thumb.setAttribute('aria-hidden',!s);thumb.querySelector('a').tabIndex=s?0:-1;}).observe(hero);
+  }
+
+  const links=[...document.querySelectorAll('.nav-links a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+en.target.id));}});},{rootMargin:'-40% 0px -55% 0px'});
+    secs.forEach(s=>s&&io.observe(s));
+  }
+
+  $('notes').onclick=function(){const on=document.body.classList.toggle('show-notes');this.setAttribute('aria-pressed',on);this.textContent=on?'Masquer les règles':'Afficher les règles du livre';};
+})();
+</script>
